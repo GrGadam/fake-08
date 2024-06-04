@@ -262,13 +262,10 @@ void Audio::FillMonoAudioBuffer(void *audioBuffer, size_t offset, size_t size){
     int16_t *buffer = (int16_t *)audioBuffer;
 
     for (size_t i = 0; i < size; ++i){
-        int32_t sample = 0;
+        int32_t sample = this->getSampleForChannel(0) + this->getSampleForChannel(1) + this->getSampleForChannel(2) + this->getSampleForChannel(3);
 
-        for (int c = 0; c < 4; ++c) {
-            sample += this->getSampleForChannel(c);
-        }
-
-	    if (sample > 0x7fff) sample = 0x7fff; else if (sample < -0x8000) sample = -0x8000;
+	    if (sample > 0x7fff) sample = 0x7fff;
+        else if (sample < -0x8000) sample = -0x8000;
 
         buffer[i] = sample;
     }
