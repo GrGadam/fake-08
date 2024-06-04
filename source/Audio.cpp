@@ -10,6 +10,9 @@
 #include <cmath>
 #include <float.h> // std::max
 
+#define samples_per_second 8000
+#define offset_base (samples_per_second / 183)
+
 
 
 //playback implemenation based on zetpo 8's
@@ -510,14 +513,12 @@ int16_t Audio::getSampleForChannel(int channel){
     using std::floor;
     using std::max;
 
-    int const samples_per_second = 22050;
-
     int16_t sample = 0;
 
     // Advance music using the master channel
     if (channel == _audioState._musicChannel.master && _audioState._musicChannel.pattern != -1)
     {
-        float const offset_per_second = 22050.f / (183.f * _audioState._musicChannel.speed);
+        float const offset_per_second = offset_base / _audioState._musicChannel.speed;
         float const offset_per_sample = offset_per_second / samples_per_second;
         _audioState._musicChannel.offset += offset_per_sample;
         _audioState._musicChannel.volume += _audioState._musicChannel.volume_step / samples_per_second;
