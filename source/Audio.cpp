@@ -10,10 +10,8 @@
 #include <cmath>
 #include <float.h> // std::max
 
-#define samples_per_second 8000
-#define offset_base (samples_per_second / 183)
-
-
+#define SAMPLES_PER_SECOND 8000
+#define OFFSET_BASE (SAMPLES_PER_SECOND / 183)
 
 //playback implemenation based on zetpo 8's
 //https://github.com/samhocevar/zepto8/blob/master/src/pico8/sfx.cpp
@@ -518,10 +516,10 @@ int16_t Audio::getSampleForChannel(int channel){
     // Advance music using the master channel
     if (channel == _audioState._musicChannel.master && _audioState._musicChannel.pattern != -1)
     {
-        float const offset_per_second = offset_base / _audioState._musicChannel.speed;
-        float const offset_per_sample = offset_per_second / samples_per_second;
+        float const offset_per_second = OFFSET_BASE / _audioState._musicChannel.speed;
+        float const offset_per_sample = offset_per_second / SAMPLES_PER_SECOND;
         _audioState._musicChannel.offset += offset_per_sample;
-        _audioState._musicChannel.volume += _audioState._musicChannel.volume_step / samples_per_second;
+        _audioState._musicChannel.volume += _audioState._musicChannel.volume_step / SAMPLES_PER_SECOND;
         _audioState._musicChannel.volume = clamp(_audioState._musicChannel.volume, 0.f, 1.f);
 
         if (_audioState._musicChannel.volume_step < 0 && _audioState._musicChannel.volume <= 0)
