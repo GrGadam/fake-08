@@ -28,7 +28,7 @@ static retro_log_printf_t log_cb;
 
 
 
-#define SAMPLERATE 8000
+#define SAMPLERATE 22050
 #define SAMPLESPERFRAME (SAMPLERATE / 30)
 #define NUM_BUFFERS 2
 const size_t audioBufferSize = SAMPLESPERFRAME * NUM_BUFFERS;
@@ -303,7 +303,7 @@ EXPORT void retro_run()
         kHeld = currKHeld;
         kDown = currKDown;
 
-        if (frame % 2 == 0) {
+        if ((frame & 1) == 0) {
             _audio->FillMonoAudioBuffer(&audioBuffer, 0, SAMPLESPERFRAME);
             audio_batch_cb(audioBuffer, SAMPLESPERFRAME);
         }
