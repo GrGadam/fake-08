@@ -423,7 +423,7 @@ Audio::getSampleForNote(noteChannel &channel, rawSfxChannel &parentChannel, rawS
     // previous note effectively goes beyond offset fmod 1 when in crossfade
     float tmod = 0;
     if (forceRemainder) tmod = 1.0f;
-    tmod += fmod(offset, 1.f);
+    tmod += offset - static_cast<int>(offset);
     // Apply effect, if any
     switch (fx) {
         case FX_NO_EFFECT:
@@ -439,7 +439,22 @@ Audio::getSampleForNote(noteChannel &channel, rawSfxChannel &parentChannel, rawS
         case FX_VIBRATO: {
             // 7.5f and 0.25f were found empirically by matching
             // frequency graphs of PICO-8 instruments.
-            float t = fabs(fmod(7.5f * tmod / offset_per_second, 1.0f) - 0.5f) - 0.25f;
+
+            //float t = fabs(fmod(7.5f * tmod / offset_per_second, 1.0f) - 0.5f) - 0.25f;
+            /*
+             * Optimize
+             * instead of fmod(x) we use x - static_cast<int>(x)
+             * instead of fabs() we use a simple if
+             */
+            float value = 7.5f * tmod / offset_per_second;
+            float fractional_part = value - static_cast<int>(value);  //fmod()
+
+            float result = fractional_part - 0.5f;
+            if (result < 0) result = -result;  //fabs()
+
+            float t = result - 0.25f;
+
+
             // Vibrato half a semi-tone, so multiply by pow(2,1/12)
             freq = lerp(freq, freq * 1.059463094359f, t);
             break;
